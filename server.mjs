@@ -1,36 +1,40 @@
-import http from 'http';
-import { promises as fs } from 'fs'; // Using promises to handle asynchronous file reading
+import express from 'express';
+import bodyParser from 'body-parser';
+import path from 'path';
+import dotenv from 'dotenv'; // For loading environment variables
 
+dotenv.config(); // Load environment variables
+
+const app = express();
 const port = 3000;
-const hostname = '127.0.0.1';
 
-const server = http.createServer(async (req, res) => {
-  if (req.url === '/' || req.url === '/index.html') {
-    try {
-      // Read the index.html file from the current directory
-      const data = await fs.readFile('./index.html', 'utf-8');
-      
-      // Serve the HTML file with the appropriate headers
-      res.statusCode = 200;
-      res.setHeader('Content-Type', 'text/html');
-      res.end(data);
-      
-    } catch (err) {
-      // Handle file not found or other errors
-      res.statusCode = 500;
-      res.setHeader('Content-Type', 'text/plain');
-      res.end('Error loading index.html');
-    }
-  } else {
-    // Handle other routes with a 404 response
-    res.statusCode = 404;
-    res.setHeader('Content-Type', 'text/plain');
-    res.end('Page not found');
-  }
+// Middleware
+app.use(bodyParser.json()); // Parse JSON request bodies
+
+// Serve the login HTML page
+app.get('/', (req, res) => {
+  res.sendFile(path.resolve('index.html')); // Serve index.html file
+});
+
+// Temporary in-memory storage for user submissions
+const submittedUsers = [];
+
+// Login Route (POST)
+app.post('/login', (req, res) => {
+  const { username, rollNumber } = req.body;
+
+  // Log the submitted information
+  console.log(`Username: ${username}, Roll Number: ${rollNumber}`);
+
+  // Store the user information in memory
+  submittedUsers.push({ username, rollNumber });
+
+  // Return a success response
+  res.status(200).json({ message: 'Submission successful' });
 });
 
 // Start the server
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
 });
 

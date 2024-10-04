@@ -2,16 +2,49 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Login</title>
 </head>
 <body>
-<input type="text">
-<input type="number">
-<button>SUBMIT</button>
+    <h1>Login</h1>
+    <form id="loginForm">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div>
+            <label for="rollNumber">Roll Number:</label>
+            <input type="text" id="rollNumber" name="rollNumber" required>
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+    <div id="message"></div>
 
-    </p>
-    
+    <script>
+// Handle form submission
+document.getElementById('loginForm').addEventListener('submit', async function(event) {
+    event.preventDefault(); // Prevent default form submission
+
+    const username = document.getElementById('username').value.trim(); // Trim input values
+    const rollNumber = document.getElementById('rollNumber').value.trim();
+
+    console.log('Submitting:', { username, rollNumber }); // Correctly logs inputs
+
+    // Send a POST request to the backend
+    const response = await fetch('http://localhost:3000/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, rollNumber }) // Ensure this is correctly formatted
+    });
+
+    // Handle response
+    const data = await response.json();
+    const messageDiv = document.getElementById('message');
+
+});
+
+    </script>
 </body>
 </html>
