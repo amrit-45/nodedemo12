@@ -3,48 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <link rel="stylesheet" href="index.css">
+    <title>Signup</title>
 </head>
 <body>
-    <h1>Login</h1>
-    <form id="loginForm">
-        <div>
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-        </div>
-        <div>
-            <label for="rollNumber">Roll Number:</label>
-            <input type="text" id="rollNumber" name="rollNumber" required>
-        </div>
-        <button type="submit">Submit</button>
-    </form>
-    <div id="message"></div>
 
+    <div id="signup">
+        <h3>Fullname</h3>
+        <input type="text" id="fullname" required><br>
+        <h3>Phone number</h3>
+        <input type="number" id="phone_number" required><br>
+        <h3>Email</h3>
+        <input type="email" id="email" required><br>
+        <h3>Password</h3>
+        <input type="password" id="password" required><br>
+        <br>
+        <button id="signupButton">Signup</button>
+    </div>
     <script>
-// Handle form submission
-document.getElementById('loginForm').addEventListener('submit', async function(event) {
-    event.preventDefault(); // Prevent default form submission
+        document.getElementById('signupButton').addEventListener('click', async function() {
+            const fullname = document.getElementById('fullname').value.trim();
+            const phone_number = document.getElementById('phone_number').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
 
-    const username = document.getElementById('username').value.trim(); // Trim input values
-    const rollNumber = document.getElementById('rollNumber').value.trim();
+            const userData = { fullname, phone_number, email, password };
 
-    console.log('Submitting:', { username, rollNumber }); // Correctly logs inputs
+            // Send the valid form data to the backend
+            const response = await fetch('http://localhost:3000/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
+            });
 
-    // Send a POST request to the backend
-    const response = await fetch('http://localhost:3000/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ username, rollNumber }) // Ensure this is correctly formatted
-    });
+            const data = await response.json();
 
-    // Handle response
-    const data = await response.json();
-    const messageDiv = document.getElementById('message');
-
-});
-
+            if (response.ok) {
+                alert(`Signup successful! Your username is ${data.username}`); // Should work if username is sent correctly
+            } else {
+                alert(data.message); // Display error message if any
+            }
+        });
     </script>
 </body>
 </html>
